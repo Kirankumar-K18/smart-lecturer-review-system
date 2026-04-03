@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Settings — SLRS{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>⚙️ Account Settings</h2>
+</div>
+
+<div class="settings-grid">
+
+  <!-- Profile Update -->
+  <div class="card">
+    <div class="card-header"><h3>👤 Update Profile</h3></div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            {{ profile_form.first_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            {{ profile_form.last_name }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          {{ profile_form.email }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          {{ profile_form.phone }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          {{ profile_form.address }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Theme</label>
+          {{ profile_form.theme }}
+        </div>
+        <button type="submit" name="update_profile" value="1" class="btn btn-primary">
+          Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="card">
+    <div class="card-header"><h3>🔒 Change Password</h3></div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          {{ password_form.old_password }}
+          {% if password_form.old_password.errors %}
+            <div class="form-error">{{ password_form.old_password.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          {{ password_form.new_password1 }}
+          {% if password_form.new_password1.errors %}
+            <div class="form-error">{{ password_form.new_password1.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          {{ password_form.new_password2 }}
+          {% if password_form.new_password2.errors %}
+            <div class="form-error">{{ password_form.new_password2.errors.0 }}</div>
+          {% endif %}
+        </div>
+        {% if password_form.non_field_errors %}
+          <div class="form-error form-error--block">{{ password_form.non_field_errors.0 }}</div>
+        {% endif %}
+        <button type="submit" name="change_password" value="1" class="btn btn-warning">
+          Change Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Account Info (read-only) -->
+  <div class="card">
+    <div class="card-header"><h3>ℹ️ Account Info</h3></div>
+    <div class="card-body">
+      <dl class="info-list">
+        <dt>Username</dt>
+        <dd>{{ request.user.username }}</dd>
+        <dt>Role</dt>
+        <dd><span class="badge badge-{{ profile.role }}">{{ profile.role|capfirst }}</span></dd>
+        <dt>Department</dt>
+        <dd>{{ profile.department.name|default:"—" }}</dd>
+        <dt>Member Since</dt>
+        <dd>{{ request.user.date_joined|date:"d M Y" }}</dd>
+        <dt>Last Login</dt>
+        <dd>{{ request.user.last_login|date:"d M Y H:i"|default:"—" }}</dd>
+      </dl>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

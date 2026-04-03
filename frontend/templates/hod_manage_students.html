@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Manage Students — SLRS{% endblock %}
+{% block page_title %}Manage Students{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>👨‍🎓 Students — {{ hod.department }}</h2>
+  <button class="btn btn-primary" onclick="togglePanel('addForm')">+ Add User</button>
+</div>
+
+<!-- Add user form (collapsible) -->
+<div class="card mb-4 collapsible-panel" id="addForm" style="display:none">
+  <div class="card-header"><h3>Add New User</h3></div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>{{ form.first_name }}
+          {% if form.first_name.errors %}<div class="form-error">{{ form.first_name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>{{ form.last_name }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Username</label>{{ form.username }}
+          {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>{{ form.email }}
+          {% if form.email.errors %}<div class="form-error">{{ form.email.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Password</label>{{ form.password }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>{{ form.role }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Department</label>{{ form.department }}
+      </div>
+      <button type="submit" class="btn btn-success">Create User</button>
+      <button type="button" class="btn btn-outline" onclick="togglePanel('addForm')">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- Students list -->
+<div class="card">
+  <div class="card-header">
+    <h3>Students List</h3>
+    <span class="badge badge-info">{{ students|length }}</span>
+  </div>
+  <div class="card-body">
+    {% if students %}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Roll No.</th><th>Name</th><th>Email</th><th>Semester</th><th>Subjects</th><th>Active</th></tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr>
+            <td>{{ student.roll_number|default:"—" }}</td>
+            <td>{{ student.user.get_full_name|default:student.user.username }}</td>
+            <td>{{ student.user.email }}</td>
+            <td>{{ student.semester }}</td>
+            <td>{{ student.subjects.count }}</td>
+            <td>
+              <span class="badge badge-{% if student.is_active %}success{% else %}danger{% endif %}">
+                {% if student.is_active %}Active{% else %}Inactive{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No students in this department.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePanel(id) {
+  var el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

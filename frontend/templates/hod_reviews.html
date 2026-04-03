@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Review Moderation — SLRS{% endblock %}
+{% block page_title %}Review Moderation{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>📝 Review Moderation</h2>
+  <span class="badge badge-warning">{{ pending|length }} pending</span>
+</div>
+
+<!-- Pending Reviews -->
+{% if pending %}
+<div class="card mb-4">
+  <div class="card-header"><h3>⏳ Pending Reviews</h3></div>
+  <div class="card-body">
+    {% for review in pending %}
+    <div class="review-card review-card--pending">
+      <div class="review-header">
+        <div>
+          <strong>For: {{ review.lecturer.user.get_full_name|default:review.lecturer.user.username }}</strong>
+          {% if review.subject %}<span class="text-muted"> — {{ review.subject.name }}</span>{% endif %}
+          <div class="text-muted text-sm">
+            By: {% if review.is_anonymous %}Anonymous{% else %}{{ review.student.user.get_full_name|default:review.student.user.username }}{% endif %}
+            &nbsp;|&nbsp; {{ review.submitted_at|date:"d M Y" }}
+          </div>
+        </div>
+        <div class="review-rating">⭐ {{ review.overall_rating }}</div>
+      </div>
+      <div class="review-ratings-row">
+        <span>Teaching: {{ review.teaching_quality }}/5</span>
+        <span>Communication: {{ review.communication }}/5</span>
+        <span>Punctuality: {{ review.punctuality }}/5</span>
+        <span>Knowledge: {{ review.knowledge }}/5</span>
+      </div>
+      {% if review.feedback %}
+        <p class="review-feedback">"{{ review.feedback }}"</p>
+      {% endif %}
+
+      <div class="review-actions">
+        <form method="post" style="display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="review_id" value="{{ review.pk }}" />
+          <input type="hidden" name="action" value="approve" />
+          <button type="submit" class="btn btn-success btn-sm">✅ Approve</button>
+        </form>
+
+        <form method="post" style="display:inline" onsubmit="return confirmReject(this)">
+          {% csrf_token %}
+          <input type="hidden" name="review_id" value="{{ review.pk }}" />
+          <input type="hidden" name="action" value="reject" />
+          <input type="text" name="rejection_reason" class="form-control form-control-sm"
+                 placeholder="Reason for rejection…" style="display:inline;width:220px" required />
+          <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="card mb-4">
+  <div class="card-body"><p class="empty-state">✅ No pending reviews. All caught up!</p></div>
+</div>
+{% endif %}
+
+<!-- Recently Approved -->
+<div class="card">
+  <div class="card-header"><h3>✅ Recently Approved</h3></div>
+  <div class="card-body">
+    {% if approved %}
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr><th>Lecturer</th><th>Student</th><th>Rating</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          {% for r in approved %}
+          <tr>
+            <td>{{ r.lecturer.user.get_full_name|default:r.lecturer.user.username }}</td>
+            <td>{% if r.is_anonymous %}Anonymous{% else %}{{ r.student.user.get_full_name|default:r.student.user.username }}{% endif %}</td>
+            <td>⭐ {{ r.overall_rating }}</td>
+            <td>{{ r.submitted_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No approved reviews yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard — SLRS{% endblock %}
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>Welcome, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+  <p class="text-muted">Here's your academic overview</p>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">📚</div>
+    <div class="stat-value">{{ total_subjects }}</div>
+    <div class="stat-label">Enrolled Subjects</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">✅</div>
+    <div class="stat-value">{{ overall_pct }}%</div>
+    <div class="stat-label">Overall Attendance</div>
+  </div>
+  <div class="stat-card stat-card--purple">
+    <div class="stat-icon">✍️</div>
+    <div class="stat-value">{{ recent_reviews|length }}</div>
+    <div class="stat-label">Reviews Submitted</div>
+  </div>
+  <div class="stat-card stat-card--orange">
+    <div class="stat-icon">🏫</div>
+    <div class="stat-value">{{ student.department|default:"—" }}</div>
+    <div class="stat-label">Department</div>
+  </div>
+</div>
+
+<!-- Attendance by Subject -->
+{% if attendance_summary %}
+<div class="card mt-4">
+  <div class="card-header">
+    <h3>📅 Attendance by Subject</h3>
+    <a href="{% url 'student_attendance' %}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Total</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Percentage</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for code, data in attendance_summary.items %}
+          <tr>
+            <td><strong>{{ code }}</strong> — {{ data.subject_name }}</td>
+            <td>{{ data.total }}</td>
+            <td class="text-success">{{ data.present }}</td>
+            <td class="text-danger">{{ data.absent }}</td>
+            <td>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar" style="width: {{ data.percentage }}%"></div>
+              </div>
+              <span>{{ data.percentage }}%</span>
+            </td>
+            <td>
+              <span class="badge badge-{% if data.status == 'Eligible' %}success{% elif data.status == 'Warning' %}warning{% else %}danger{% endif %}">
+                {{ data.status }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Recent Reviews -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3>⭐ Recent Reviews</h3>
+    <a href="{% url 'student_review_history' %}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    {% if recent_reviews %}
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr><th>Lecturer</th><th>Subject</th><th>Rating</th><th>Status</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            {% for review in recent_reviews %}
+            <tr>
+              <td>{{ review.lecturer.user.get_full_name|default:review.lecturer.user.username }}</td>
+              <td>{{ review.subject.name|default:"—" }}</td>
+              <td>⭐ {{ review.overall_rating }}</td>
+              <td>
+                <span class="badge badge-{% if review.status == 'approved' %}success{% elif review.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                  {{ review.status|capfirst }}
+                </span>
+              </td>
+              <td>{{ review.submitted_at|date:"d M Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="empty-state">No reviews submitted yet. <a href="{% url 'student_review' %}">Submit your first review →</a></p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions mt-4">
+  <a href="{% url 'student_review' %}" class="action-card">
+    <div class="action-icon">✍️</div>
+    <div class="action-label">Submit Review</div>
+  </a>
+  <a href="{% url 'student_attendance' %}" class="action-card">
+    <div class="action-icon">📅</div>
+    <div class="action-label">View Attendance</div>
+  </a>
+  <a href="{% url 'settings' %}" class="action-card">
+    <div class="action-icon">⚙️</div>
+    <div class="action-label">Settings</div>
+  </a>
+</div>
+{% endblock %}

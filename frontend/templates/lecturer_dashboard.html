@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Lecturer Dashboard — SLRS{% endblock %}
+{% block page_title %}Lecturer Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>Welcome, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+  <p class="text-muted">{{ lecturer.department }} Department</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">👨‍🎓</div>
+    <div class="stat-value">{{ students_in_dept }}</div>
+    <div class="stat-label">Students in Dept.</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">📚</div>
+    <div class="stat-value">{{ total_subjects }}</div>
+    <div class="stat-label">Subjects</div>
+  </div>
+  <div class="stat-card stat-card--yellow">
+    <div class="stat-icon">⭐</div>
+    <div class="stat-value">{{ lecturer.average_rating|floatformat:1 }}</div>
+    <div class="stat-label">Avg. Rating</div>
+  </div>
+  <div class="stat-card stat-card--purple">
+    <div class="stat-icon">📅</div>
+    <div class="stat-value">{{ today_attendance_count }}</div>
+    <div class="stat-label">Attendance Marked Today</div>
+  </div>
+</div>
+
+<!-- Recent Reviews -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3>⭐ Recent Reviews</h3>
+    <a href="{% url 'lecturer_reviews' %}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    {% if recent_reviews %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>Student</th><th>Subject</th><th>Overall Rating</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          {% for r in recent_reviews %}
+          <tr>
+            <td>{% if r.is_anonymous %}Anonymous{% else %}{{ r.student.user.get_full_name|default:r.student.user.username }}{% endif %}</td>
+            <td>{{ r.subject.name|default:"—" }}</td>
+            <td>⭐ {{ r.overall_rating }}</td>
+            <td>{{ r.submitted_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No approved reviews yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="quick-actions mt-4">
+  <a href="{% url 'lecturer_attendance' %}" class="action-card">
+    <div class="action-icon">📅</div>
+    <div class="action-label">Mark Attendance</div>
+  </a>
+  <a href="{% url 'lecturer_reviews' %}" class="action-card">
+    <div class="action-icon">⭐</div>
+    <div class="action-label">View Reviews</div>
+  </a>
+  <a href="{% url 'settings' %}" class="action-card">
+    <div class="action-icon">⚙️</div>
+    <div class="action-label">Settings</div>
+  </a>
+</div>
+{% endblock %}

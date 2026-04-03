@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Review History — SLRS{% endblock %}
+{% block page_title %}Review History{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>📜 My Review History</h2>
+  <a href="{% url 'student_review' %}" class="btn btn-primary">+ New Review</a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    {% if reviews %}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Lecturer</th>
+            <th>Subject</th>
+            <th>Rating</th>
+            <th>Teaching</th>
+            <th>Communication</th>
+            <th>Punctuality</th>
+            <th>Knowledge</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for review in reviews %}
+          <tr>
+            <td>{{ review.lecturer.user.get_full_name|default:review.lecturer.user.username }}</td>
+            <td>{{ review.subject.name|default:"—" }}</td>
+            <td><strong>⭐ {{ review.overall_rating }}</strong></td>
+            <td>{{ review.teaching_quality }}/5</td>
+            <td>{{ review.communication }}/5</td>
+            <td>{{ review.punctuality }}/5</td>
+            <td>{{ review.knowledge }}/5</td>
+            <td>
+              <span class="badge badge-{% if review.status == 'approved' %}success{% elif review.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                {{ review.status|capfirst }}
+              </span>
+              {% if review.status == 'rejected' and review.rejection_reason %}
+                <div class="text-danger text-sm mt-1">{{ review.rejection_reason }}</div>
+              {% endif %}
+            </td>
+            <td>{{ review.submitted_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">
+        No reviews submitted yet.
+        <a href="{% url 'student_review' %}">Submit your first review →</a>
+      </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

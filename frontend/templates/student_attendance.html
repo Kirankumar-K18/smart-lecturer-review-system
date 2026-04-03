@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}My Attendance — SLRS{% endblock %}
+{% block page_title %}My Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>📅 Attendance Records</h2>
+</div>
+
+<!-- Subject filter -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="get" class="filter-form">
+      <div class="form-group">
+        <label class="form-label">Filter by Subject</label>
+        <select name="subject" class="form-select" onchange="this.form.submit()">
+          <option value="">All Subjects</option>
+          {% for sub in subjects %}
+            <option value="{{ sub.pk }}" {% if selected_subject == sub.pk|stringformat:"s" %}selected{% endif %}>
+              {{ sub.code }} — {{ sub.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Summary cards -->
+{% if attendance_summary %}
+<div class="stats-grid mb-4">
+  {% for code, data in attendance_summary.items %}
+  <div class="stat-card stat-card--{% if data.status == 'Eligible' %}green{% elif data.status == 'Warning' %}orange{% else %}red{% endif %}">
+    <div class="stat-value">{{ data.percentage }}%</div>
+    <div class="stat-label">{{ code }}</div>
+    <div class="stat-sub">{{ data.present }}/{{ data.total }} classes</div>
+    <span class="badge badge-{% if data.status == 'Eligible' %}success{% elif data.status == 'Warning' %}warning{% else %}danger{% endif %} mt-1">
+      {{ data.status }}
+    </span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Detailed records -->
+<div class="card">
+  <div class="card-header">
+    <h3>Detailed Records</h3>
+    <span class="badge badge-info">{{ records|length }} record(s)</span>
+  </div>
+  <div class="card-body">
+    {% if records %}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Marked By</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in records %}
+          <tr>
+            <td>{{ rec.date|date:"d M Y" }}</td>
+            <td>{{ rec.subject.code }} — {{ rec.subject.name }}</td>
+            <td>
+              <span class="badge badge-{% if rec.status == 'present' %}success{% elif rec.status == 'absent' %}danger{% else %}warning{% endif %}">
+                {{ rec.status|capfirst }}
+              </span>
+            </td>
+            <td>{{ rec.lecturer.user.get_full_name|default:rec.lecturer.user.username|default:"—" }}</td>
+            <td>{{ rec.remarks|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No attendance records found.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

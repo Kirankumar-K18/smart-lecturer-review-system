@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Mark Attendance — SLRS{% endblock %}
+{% block page_title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>📅 Mark Attendance</h2>
+</div>
+
+<!-- Step 1: Select subject and date -->
+<div class="card mb-4">
+  <div class="card-header"><h3>Step 1 — Select Subject &amp; Date</h3></div>
+  <div class="card-body">
+    <form method="post" action="{% url 'lecturer_attendance' %}">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          {{ form.subject }}
+          {% if form.subject.errors %}<div class="form-error">{{ form.subject.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          {{ form.date }}
+          {% if form.date.errors %}<div class="form-error">{{ form.date.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Load Students</button>
+    </form>
+  </div>
+</div>
+
+<!-- Step 2: Mark each student -->
+{% if attendance_list %}
+<div class="card mb-4">
+  <div class="card-header">
+    <h3>Step 2 — Mark Attendance for {{ selected_subject.name }} on {{ selected_date }}</h3>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{% url 'lecturer_attendance' %}">
+      {% csrf_token %}
+      <input type="hidden" name="subject" value="{{ selected_subject.pk }}" />
+      <input type="hidden" name="date" value="{{ selected_date }}" />
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr><th>#</th><th>Roll No.</th><th>Name</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for entry in attendance_list %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ entry.student.roll_number|default:"—" }}</td>
+              <td>{{ entry.student.user.get_full_name|default:entry.student.user.username }}</td>
+              <td>
+                <input type="hidden" name="student_ids" value="{{ entry.student.pk }}" />
+                <select name="status" class="form-select form-select-sm" style="width:120px">
+                  <option value="present" {% if entry.status == 'present' %}selected{% endif %}>✅ Present</option>
+                  <option value="absent"  {% if entry.status == 'absent'  %}selected{% endif %}>❌ Absent</option>
+                  <option value="late"    {% if entry.status == 'late'    %}selected{% endif %}>⏰ Late</option>
+                </select>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button type="submit" name="mark" value="1" class="btn btn-success mt-2">Save Attendance</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- Recent attendance -->
+<div class="card">
+  <div class="card-header"><h3>Recent Records</h3></div>
+  <div class="card-body">
+    {% if recent %}
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr><th>Date</th><th>Subject</th><th>Student</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for rec in recent %}
+          <tr>
+            <td>{{ rec.date|date:"d M Y" }}</td>
+            <td>{{ rec.subject.code }}</td>
+            <td>{{ rec.student.user.get_full_name|default:rec.student.user.username }}</td>
+            <td>
+              <span class="badge badge-{% if rec.status == 'present' %}success{% elif rec.status == 'absent' %}danger{% else %}warning{% endif %}">
+                {{ rec.status|capfirst }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No attendance records yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

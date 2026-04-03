@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}HOD Dashboard — SLRS{% endblock %}
+{% block page_title %}HOD Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>Welcome, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+  <p class="text-muted">Head of Department — {{ hod.department }}</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">👨‍🎓</div>
+    <div class="stat-value">{{ students_count }}</div>
+    <div class="stat-label">Students</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">👨‍🏫</div>
+    <div class="stat-value">{{ lecturers_count }}</div>
+    <div class="stat-label">Lecturers</div>
+  </div>
+  <div class="stat-card stat-card--orange">
+    <div class="stat-icon">📝</div>
+    <div class="stat-value">{{ pending_reviews }}</div>
+    <div class="stat-label">Pending Reviews</div>
+  </div>
+  <div class="stat-card stat-card--purple">
+    <div class="stat-icon">🏫</div>
+    <div class="stat-value">{{ hod.department|default:"—" }}</div>
+    <div class="stat-label">Department</div>
+  </div>
+</div>
+
+<!-- Top Lecturers -->
+{% if top_lecturers %}
+<div class="card mt-4">
+  <div class="card-header">
+    <h3>🏆 Top Rated Lecturers</h3>
+    <a href="{% url 'hod_manage_lecturers' %}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Subjects</th><th>Avg. Rating</th><th>Reviews</th></tr>
+        </thead>
+        <tbody>
+          {% for lec in top_lecturers %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ lec.user.get_full_name|default:lec.user.username }}</td>
+            <td>{{ lec.subjects.count }}</td>
+            <td>⭐ {{ lec.average_rating|floatformat:1 }}</td>
+            <td>{{ lec.total_reviews }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="quick-actions mt-4">
+  <a href="{% url 'hod_manage_students' %}"  class="action-card">
+    <div class="action-icon">👨‍🎓</div>
+    <div class="action-label">Manage Students</div>
+  </a>
+  <a href="{% url 'hod_manage_lecturers' %}" class="action-card">
+    <div class="action-icon">👨‍🏫</div>
+    <div class="action-label">Manage Lecturers</div>
+  </a>
+  <a href="{% url 'hod_reviews' %}" class="action-card">
+    <div class="action-icon">📝</div>
+    <div class="action-label">Review Moderation</div>
+  </a>
+</div>
+{% endblock %}

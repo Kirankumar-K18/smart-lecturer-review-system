@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}My Reviews — SLRS{% endblock %}
+{% block page_title %}My Reviews{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>⭐ Reviews Received</h2>
+</div>
+
+{% if avg_ratings.avg_overall %}
+<div class="stats-grid mb-4">
+  <div class="stat-card stat-card--yellow">
+    <div class="stat-icon">⭐</div>
+    <div class="stat-value">{{ avg_ratings.avg_overall|floatformat:1 }}</div>
+    <div class="stat-label">Overall Rating</div>
+  </div>
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">📖</div>
+    <div class="stat-value">{{ avg_ratings.avg_teaching|floatformat:1 }}</div>
+    <div class="stat-label">Teaching Quality</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">💬</div>
+    <div class="stat-value">{{ avg_ratings.avg_comm|floatformat:1 }}</div>
+    <div class="stat-label">Communication</div>
+  </div>
+  <div class="stat-card stat-card--purple">
+    <div class="stat-icon">⏰</div>
+    <div class="stat-value">{{ avg_ratings.avg_punctual|floatformat:1 }}</div>
+    <div class="stat-label">Punctuality</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">
+    <h3>All Approved Reviews</h3>
+    <span class="badge badge-info">{{ reviews|length }} review(s)</span>
+  </div>
+  <div class="card-body">
+    {% if reviews %}
+    {% for review in reviews %}
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <strong>{% if review.is_anonymous %}Anonymous{% else %}{{ review.student.user.get_full_name|default:review.student.user.username }}{% endif %}</strong>
+          {% if review.subject %}<span class="text-muted"> — {{ review.subject.name }}</span>{% endif %}
+        </div>
+        <div class="review-rating">⭐ {{ review.overall_rating }}</div>
+      </div>
+      <div class="review-ratings-row">
+        <span>Teaching: <strong>{{ review.teaching_quality }}/5</strong></span>
+        <span>Communication: <strong>{{ review.communication }}/5</strong></span>
+        <span>Punctuality: <strong>{{ review.punctuality }}/5</strong></span>
+        <span>Knowledge: <strong>{{ review.knowledge }}/5</strong></span>
+      </div>
+      {% if review.feedback %}
+        <p class="review-feedback">"{{ review.feedback }}"</p>
+      {% endif %}
+      <div class="review-date text-muted text-sm">{{ review.submitted_at|date:"d M Y" }}</div>
+    </div>
+    {% endfor %}
+    {% else %}
+      <p class="empty-state">No approved reviews yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

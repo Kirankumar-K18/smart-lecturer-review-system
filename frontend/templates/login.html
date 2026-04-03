@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Login — SLRS{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <div class="auth-logo">🎓</div>
+  <h1 class="auth-title">Smart Lecturer Review System</h1>
+  <p class="auth-subtitle">Sign in to your account</p>
+
+  <form method="post" action="{% url 'login' %}" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="form-label" for="id_username">Username</label>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div class="form-error">{{ form.username.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="id_password">Password</label>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div class="form-error">{{ form.password.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="form-error form-error--block">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+  </form>
+
+  <p class="auth-footer">
+    Don't have an account?
+    <a href="{% url 'register' %}">Register here</a>
+  </p>
+</div>
+{% endblock %}

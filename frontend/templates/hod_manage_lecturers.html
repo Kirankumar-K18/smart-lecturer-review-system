@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Manage Lecturers — SLRS{% endblock %}
+{% block page_title %}Manage Lecturers{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>👨‍🏫 Lecturers — {{ hod.department }}</h2>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Lecturers List</h3>
+    <span class="badge badge-info">{{ lecturers|length }}</span>
+  </div>
+  <div class="card-body">
+    {% if lecturers %}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Name</th><th>Employee ID</th><th>Designation</th><th>Subjects</th><th>Avg. Rating</th><th>Reviews</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for lec in lecturers %}
+          <tr>
+            <td><strong>{{ lec.user.get_full_name|default:lec.user.username }}</strong></td>
+            <td>{{ lec.employee_id|default:"—" }}</td>
+            <td>{{ lec.designation|default:"—" }}</td>
+            <td>
+              {% for sub in lec.subjects.all %}
+                <span class="badge badge-info">{{ sub.code }}</span>
+              {% empty %}—
+              {% endfor %}
+            </td>
+            <td>⭐ {{ lec.average_rating|floatformat:1 }}</td>
+            <td>{{ lec.total_reviews }}</td>
+            <td>
+              <span class="badge badge-{% if lec.is_active %}success{% else %}danger{% endif %}">
+                {% if lec.is_active %}Active{% else %}Inactive{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No lecturers in this department.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

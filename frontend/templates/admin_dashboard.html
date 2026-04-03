@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — SLRS{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>⚙️ System Overview</h2>
+  <span class="badge badge-admin">ADMIN</span>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">👥</div>
+    <div class="stat-value">{{ total_users }}</div>
+    <div class="stat-label">Total Users</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-icon">👨‍🎓</div>
+    <div class="stat-value">{{ total_students }}</div>
+    <div class="stat-label">Students</div>
+  </div>
+  <div class="stat-card stat-card--purple">
+    <div class="stat-icon">👨‍🏫</div>
+    <div class="stat-value">{{ total_lecturers }}</div>
+    <div class="stat-label">Lecturers</div>
+  </div>
+  <div class="stat-card stat-card--orange">
+    <div class="stat-icon">🏫</div>
+    <div class="stat-value">{{ total_hods }}</div>
+    <div class="stat-label">HODs</div>
+  </div>
+  <div class="stat-card stat-card--yellow">
+    <div class="stat-icon">📝</div>
+    <div class="stat-value">{{ total_reviews }}</div>
+    <div class="stat-label">Total Reviews</div>
+  </div>
+  <div class="stat-card stat-card--red">
+    <div class="stat-icon">⏳</div>
+    <div class="stat-value">{{ pending_reviews }}</div>
+    <div class="stat-label">Pending Reviews</div>
+  </div>
+</div>
+
+<!-- Reviews by Department -->
+{% if reviews_by_dept %}
+<div class="card mt-4">
+  <div class="card-header"><h3>📊 Reviews by Department</h3></div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>Department</th><th>Reviews</th><th>Avg. Rating</th></tr>
+        </thead>
+        <tbody>
+          {% for row in reviews_by_dept %}
+          <tr>
+            <td>{{ row.lecturer__department__name|default:"—" }}</td>
+            <td>{{ row.count }}</td>
+            <td>⭐ {{ row.avg_rating|floatformat:1 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Recent Activity Logs -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3>📋 Recent Activity</h3>
+    <a href="{% url 'admin_activity_logs' %}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    {% if recent_logs %}
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr><th>User</th><th>Action</th><th>Description</th><th>Time</th></tr>
+        </thead>
+        <tbody>
+          {% for log in recent_logs %}
+          <tr>
+            <td>{{ log.user.username|default:"System" }}</td>
+            <td><span class="badge badge-info">{{ log.log_type }}</span></td>
+            <td>{{ log.description|truncatechars:60 }}</td>
+            <td>{{ log.created_at|date:"d M H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="empty-state">No activity logs yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="quick-actions mt-4">
+  <a href="{% url 'admin_manage_users' %}"  class="action-card">
+    <div class="action-icon">👥</div><div class="action-label">Manage Users</div>
+  </a>
+  <a href="{% url 'admin_activity_logs' %}" class="action-card">
+    <div class="action-icon">📋</div><div class="action-label">Activity Logs</div>
+  </a>
+  <a href="{% url 'admin_bad_words' %}"     class="action-card">
+    <div class="action-icon">🚫</div><div class="action-label">Bad Words</div>
+  </a>
+  <a href="/admin/" target="_blank"         class="action-card">
+    <div class="action-icon">⚙️</div><div class="action-label">Django Admin</div>
+  </a>
+</div>
+{% endblock %}
