@@ -78,25 +78,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smart_lecturer.wsgi.application'
 
-if os.environ.get("DATABASE_URL"):
-    # Render PostgreSQL
+# ── Database ──────────────────────────────────────────────────────────
+# Use PostgreSQL from DATABASE_URL in production (Neon/Render).
+# Fall back to local MySQL when DATABASE_URL is not set.
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
     DATABASES = {
-        "default": dj_database_url.parse(
-            os.environ.get("DATABASE_URL"),
+        'default': dj_database_url.parse(
+            DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True
+            ssl_require=True,
         )
     }
 else:
-    # Local MySQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME':     os.environ.get('DB_NAME', 'smart_lecturer'),
-            'USER':     os.environ.get('DB_USER', 'root'),
+            'NAME': os.environ.get('DB_NAME', 'smart_lecturer'),
+            'USER': os.environ.get('DB_USER', 'root'),
             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST':     os.environ.get('DB_HOST', 'localhost'),
-            'PORT':     os.environ.get('DB_PORT', '3306'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '3306'),
             'OPTIONS': {
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
                 'charset': 'utf8mb4',
