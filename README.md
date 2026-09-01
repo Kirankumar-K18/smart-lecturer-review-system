@@ -18,7 +18,7 @@
 
 ---
 
-## 🌐 Live Demo
+## Live Demo
 
 **Live Application:** https://edupulse-984z.onrender.com
 
@@ -26,7 +26,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 EduPulse is a comprehensive Academic Feedback and Attendance Management System developed to streamline academic administration, lecturer evaluation, attendance monitoring, and institutional analytics.
 
@@ -34,9 +34,9 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🔐 Authentication & Security
+### Authentication & Security
 
 * Custom Django User Model
 * Role-Based Access Control (RBAC)
@@ -48,7 +48,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 * CSRF Protection
 * Password Hashing (PBKDF2)
 
-### 📊 Attendance Management
+### Attendance Management
 
 * Subject-Based Attendance Tracking
 * Attendance Marking and Editing
@@ -58,7 +58,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 * Attendance Eligibility Validation
 * Duplicate Attendance Prevention
 
-### ⭐ Lecturer Feedback System
+### Lecturer Feedback System
 
 * Lecturer Rating System (1–5 Stars)
 * Student Feedback Submission
@@ -69,7 +69,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 * Review History Tracking
 * One Review Per Lecturer Per Semester
 
-### 📈 Analytics Dashboard
+### Analytics Dashboard
 
 * Attendance Analytics
 * Lecturer Performance Monitoring
@@ -80,7 +80,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 
 ---
 
-## 👥 User Roles
+## User Roles
 
 | Role     | Responsibilities                                                                |
 | -------- | ------------------------------------------------------------------------------- |
@@ -91,7 +91,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Category        | Technology               |
 | --------------- | ------------------------ |
@@ -110,7 +110,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 
 ---
 
-## 📸 Application Screenshots
+## Application Screenshots
 
 ### Login Page
 
@@ -134,7 +134,7 @@ The platform provides dedicated dashboards for Administrators, Heads of Departme
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 EduPulse/
@@ -167,7 +167,7 @@ EduPulse/
 
 ---
 
-## 🚀 Key Highlights
+## Key Highlights
 
 * Custom Django User Model
 * Role-Based Academic Management System
@@ -181,7 +181,7 @@ EduPulse/
 
 ---
 
-## ⚙️ Local Installation
+## Local Installation
 
 ### Clone Repository
 
@@ -263,7 +263,7 @@ http://127.0.0.1:8000/
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 * Django CSRF Protection
 * Password Hashing (PBKDF2)
@@ -277,7 +277,7 @@ http://127.0.0.1:8000/
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 EduPulse is deployed on Render using:
 
@@ -297,7 +297,7 @@ Production deployment includes:
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 * AI-Based Feedback Sentiment Analysis
 * Lecturer Performance Prediction
@@ -309,7 +309,7 @@ Production deployment includes:
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Kirankumar K**
 
@@ -325,7 +325,7 @@ Live Demo: https://edupulse-984z.onrender.com
 
 ---
 
-## 📄 License
+## License
 
 This project is developed for educational and academic purposes.
 
